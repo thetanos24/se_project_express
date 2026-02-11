@@ -19,7 +19,9 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid user ID." });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data provided for user creation." });
       }
       return res
         .status(SERVER_ERROR)

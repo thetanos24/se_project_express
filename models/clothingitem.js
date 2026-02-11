@@ -30,8 +30,7 @@ const clothingitemSchema = new mongoose.Schema({
   },
   likes: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
       default: [],
     },
   ],
@@ -41,4 +40,4 @@ const clothingitemSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("clothingitem", clothingitemSchema);
+module.exports = mongoose.model("clothingItem", clothingitemSchema);
