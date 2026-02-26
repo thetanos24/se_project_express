@@ -59,7 +59,11 @@ const getCurrentUser = (req, res) => {
 
   User.findById(userId)
     .orFail()
-    .then((user) => res.status(200).send(user))
+    .then((user) => {
+      const userResponse = user.toObject();
+      delete userResponse.password;
+      res.status(200).send(userResponse);
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
@@ -111,8 +115,13 @@ const updateCurrentUser = (req, res) => {
     }
   )
     .orFail()
-    .then((user) => res.status(200).send(user))
+    .then((user) => {
+      const userResponse = user.toObject();
+      delete userResponse.password;
+      res.status(200).send(userResponse);
+    })
     .catch((err) => {
+      console.error(err);
       if (err.name === "ValidationError") {
         return res
           .status(BAD_REQUEST)
