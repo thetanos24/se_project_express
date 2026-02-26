@@ -1,5 +1,14 @@
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const User = require("../models/user");
-const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require("../utils/errors");
+const { JWT_SECRET } = require("../utils/config");
+const {
+  BAD_REQUEST,
+  NOT_FOUND,
+  CONFLICT,
+  SERVER_ERROR,
+  UNAUTHORIZED,
+} = require("../utils/errors");
 
 const getUsers = (req, res) => {
   User.find({})
@@ -13,11 +22,27 @@ const getUsers = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, avatar } = req.body;
-  User.create({ name, avatar })
-    .then((user) => res.status(201).send(user))
+  const { name, avatar, email, password } = req.body;
+
+  bcrypt
+    .hash(password, 10)
+    .then((hashedPassword) => {
+      return User.create({ name, avatar, email, password: hashedPassword });
+    })
+    .then((user) => {
+      const userResponse = user.toObject();
+      delete userResponse.password;
+      res.status(201).send(userResponse);
+    })
     .catch((err) => {
       console.error(err);
+
+      if (err.code === 11000) {
+        return res
+          .status(CONFLICT)
+          .send({ message: "A user with this email already exists." });
+      }
+
       if (err.name === "ValidationError") {
         return res
           .status(BAD_REQUEST)
@@ -48,4 +73,28 @@ const getUser = (req, res) => {
     });
 };
 
-module.exports = { getUsers, createUser, getUser };
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: "Email and password are required." });
+  }
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
+      });
+      res.send({ token });
+    })
+    .catch((err) => {
+      console.error(err);
+      return res
+        .status(UNAUTHORIZED)
+        .send({ message: "Incorrect email or password." });
+    });
+};
+
+module.exports = { getUsers, createUser, getUser, login };
