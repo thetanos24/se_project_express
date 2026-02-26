@@ -98,4 +98,4 @@ const login = (req, res) => {
     });
 };
 
-module.exports = { getUsers, createUser, geCurrenttUser, login };
+module.exports = { getUsers, createUser, getCurrentUser, login };
