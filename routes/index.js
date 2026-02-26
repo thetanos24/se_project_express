@@ -13,7 +13,7 @@ router.post("/signin", login);
 router.post("/signup", createUser);
 
 router.use("/users", auth, userRouter);
-router.use("/items", auth, itemRouter);
+router.use("/items", itemRouter);
 
 router.use((req, res) => {
   res.status(NOT_FOUND).send({

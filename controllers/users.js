@@ -10,23 +10,14 @@ const {
   UNAUTHORIZED,
 } = require("../utils/errors");
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(SERVER_ERROR)
-        .send({ message: "An error has occured on the server." });
-    });
-};
-
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
 
   bcrypt
     .hash(password, 10)
-    .then((hashedPassword) => User.create({ name, avatar, email, password: hashedPassword }))
+    .then((hashedPassword) =>
+      User.create({ name, avatar, email, password: hashedPassword })
+    )
     .then((user) => {
       const userResponse = user.toObject();
       delete userResponse.password;
@@ -48,7 +39,7 @@ const createUser = (req, res) => {
       }
       return res
         .status(SERVER_ERROR)
-        .send({ message: "An error has occured on the server." });
+        .send({ message: "An error has occurred on the server." });
     });
 };
 
@@ -72,7 +63,7 @@ const getCurrentUser = (req, res) => {
       }
       return res
         .status(SERVER_ERROR)
-        .send({ message: "An error has occured on the server." });
+        .send({ message: "An error has occurred on the server." });
     });
 };
 
@@ -93,10 +84,14 @@ const login = (req, res) => {
       res.send({ token });
     })
     .catch((err) => {
-      console.error(err);
+      if (err.message === "Incorrect email or password") {
+        return res
+          .status(UNAUTHORIZED)
+          .send({ message: "Incorrect email or password." });
+      }
       return res
-        .status(UNAUTHORIZED)
-        .send({ message: "Incorrect email or password." });
+        .status(SERVER_ERROR)
+        .send({ message: "An error has occurred on the server." });
     });
 };
 
@@ -130,12 +125,11 @@ const updateCurrentUser = (req, res) => {
       }
       return res
         .status(SERVER_ERROR)
-        .send({ message: "An error has occured on the server." });
+        .send({ message: "An error has occurred on the server." });
     });
 };
 
 module.exports = {
-  getUsers,
   createUser,
   getCurrentUser,
   updateCurrentUser,
