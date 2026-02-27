@@ -28,6 +28,8 @@
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "express": "^4.22.1",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.23.0",
     "validator": "^13.15.26"
