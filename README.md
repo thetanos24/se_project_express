@@ -34,6 +34,18 @@ This project leverages a modern JavaScript stack and industry-standard practices
 
 - Express-Rate-Limit: Protects the infrastructure from Denial of Service (DoS) and brute-force attempts.
 
+## Deployment
+
+This project is deployed on Google Cloud Platform VM instance.
+
+[weatherweartoday.jumpingcrab.com](https://weatherweartoday.jumpingcrab.com)
+
+## Links
+
+- [GitHub Backend Repository](https://github.com/thetanos24/se_project_express)
+
+- [GitHub Frontend Repository](https://github.com/thetanos24/se_project_react)
+
 ## Running the Project
 
 `npm run start` — to launch the server
