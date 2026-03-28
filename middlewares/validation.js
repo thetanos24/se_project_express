@@ -58,14 +58,24 @@ const validateAuthentication = celebrate({
 });
 
 const validateId = celebrate({
-  params: Joi.object().keys({
-    itemId: Joi.string().hex().length(24).messages({
-      "string.hex": 'The "itemId" must be a hexadecimal value',
-      "string.length": 'The "itemId" must be 24 characters long',
+  params: Joi.object()
+    .keys({
+      itemId: Joi.string().hex().length(24),
+      userId: Joi.string().hex().length(24),
+    })
+    .min(1),
+});
+
+const validateUserUpdate = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30).messages({
+      "string.min": 'The minimum length of the "name" field is 2',
+      "string.max": 'The maximum length of the "name" field is 30',
+      "any.required": 'The "name" field is required',
     }),
-    userId: Joi.string().hex().length(24).messages({
-      "string.hex": 'The "userId" must be a hexadecimal value',
-      "string.length": 'The "userId" must be 24 characters long',
+    avatar: Joi.string().required().custom(validateURL).messages({
+      "string.uri": 'The "avatar" field must be a valid url',
+      "any.required": 'The "avatar" field is required',
     }),
   }),
 });
@@ -75,4 +85,5 @@ module.exports = {
   validateUserBody,
   validateAuthentication,
   validateId,
+  validateUserUpdate,
 };
